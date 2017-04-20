@@ -6,3 +6,7 @@ puts/
 *.dat
 *.JPG
 
+myl/
+nface/
+__pycache__/
+.idea/
