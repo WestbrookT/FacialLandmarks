@@ -1,0 +1,8 @@
+*.jpg
+*.png
+puts/
+*.h5
+*.csv
+*.dat
+*.JPG
+
