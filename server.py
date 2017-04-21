@@ -36,7 +36,7 @@ def make_model(weights_path):
     return model
 
 import sys
-model = make_model(sys.argv[2])
+model = make_model(sys.argv[1])
 
 
 
