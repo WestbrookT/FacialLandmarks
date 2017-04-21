@@ -114,7 +114,7 @@ def grey_to_pyg(arr):
     return out
 
 
-model = make_model('small4.h5')
+model = make_model(sys.argv[2])
 
 # f = open('training.csv', 'r')
 # answers, images = load(f)

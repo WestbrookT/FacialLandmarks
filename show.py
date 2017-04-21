@@ -81,11 +81,12 @@ def grey_to_pyg(arr):
     return out
 
 
-model = make_model('flip.h5')
+model = make_model('rescale.h5')
 
 # f = open('training.csv', 'r')
 id = 29
 images, answers = conv.load_dataset(scale=.125, max_id=id+1, min_id=id)
+print(len(images))
 #images, answers = conv.load_my_set(19)
 # images = images[-40:]
 # answers = answers[-40:]

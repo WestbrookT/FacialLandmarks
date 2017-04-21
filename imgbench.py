@@ -263,7 +263,7 @@ def flip(origin, points):
 
 
 
-def crop_aug(pilimg, points, crop_size=50, center=None, size=1000, flatten=False, scale=1):
+def crop_aug(pilimg, points, crop_size=50, center=None, size=1000, flatten=False, scale=1, intensity_fuzz=.1):
     """
 
     :param pilimg: A pillow image object
@@ -329,11 +329,16 @@ def crop_aug(pilimg, points, crop_size=50, center=None, size=1000, flatten=False
                     curpts.append((xp, yp))
             outpoints.append(curpts)
 
-
+    # for i, image in enumerate(outimgs):
+    #     break
+    #     outimgs.append(darken(image, intensity_fuzz))
+    #     outpoints.append(outpoints[i])
+    #     outimgs.append(lighten(image, intensity_fuzz))
+    #     outpoints.append(outpoints[i])
 
     return outimgs, outpoints
 
-def augment_images(img_list, point_list, crop_size=50, center=None, size=1000, flatten=True, scale=1):
+def augment_images(img_list, point_list, crop_size=50, center=None, size=1000, flatten=True, scale=1, scale_fuzz=.01, intensity_fuzz=.1):
     """
     Uses the crop_aug function to create a keras ready dataset
     :param img_list: Can be a list of images in array, pil, or surface format
@@ -351,6 +356,16 @@ def augment_images(img_list, point_list, crop_size=50, center=None, size=1000, f
         out_images += new_images
         out_points += new_points
 
+        new_images, new_points = crop_aug(image, point_list[i], crop_size, center, size, flatten, scale+scale_fuzz)
+
+        out_images += new_images
+        out_points += new_points
+
+        new_images, new_points = crop_aug(image, point_list[i], crop_size, center, size, flatten, scale+scale_fuzz)
+
+        out_images += new_images
+        out_points += new_points
+
         # image, pts = flip(image, point_list[i])
         #print(point_list[i], pts)
 
@@ -359,10 +374,40 @@ def augment_images(img_list, point_list, crop_size=50, center=None, size=1000, f
         # out_images += new_images
         # out_points += new_points
 
+
+
     if flatten:
         out_points = np.array(out_points)
 
     return np.array(out_images), out_points
+
+def darken(image, fuzz):
+
+    image = to_PIL(image)
+
+    pixels = image.getdata()
+
+    new_image = Image.new('RGB', image.size)
+    new_image_list = []
+
+    mult = 1.0 - fuzz
+
+    for pixel in pixels:
+        new_pixel = [int(pixel[0] * mult), int(pixel[1] * mult), int(pixel[2] * mult)]
+
+        for i, val in enumerate(new_pixel):
+            if val > 255:
+                new_pixel[i] = 255
+            elif val < 0:
+                new_pixel[i] = 0
+
+        new_image_list.append(tuple(new_pixel))
+    new_image.putdata(new_image_list)
+    return to_array(new_image)
+
+def lighten(image, fuzz):
+    return darken(image, -fuzz)
+
 
 def resize(origin, width, height):
     origin_original = origin
