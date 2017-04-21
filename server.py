@@ -35,8 +35,8 @@ def make_model(weights_path):
     print(model.summary())
     return model
 
-
-model = make_model('small4.h5')
+import sys
+model = make_model(sys.argv[2])
 
 
 
